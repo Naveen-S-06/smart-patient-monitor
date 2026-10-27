@@ -16,6 +16,7 @@
     <groupId>com.naveen</groupId>
     <artifactId>smart-patient-monitor</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+
     <name>smart-patient-monitor</name>
     <description>Smart Patient Monitoring System</description>
 
@@ -24,21 +25,33 @@
     </properties>
 
     <dependencies>
+
+        <!-- Spring MVC web application -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webmvc</artifactId>
         </dependency>
 
+        <!-- Thymeleaf templates -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
 
+        <!-- JUnit and Spring Boot testing -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!-- Spring MVC testing support for Spring Boot 4 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webmvc-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
