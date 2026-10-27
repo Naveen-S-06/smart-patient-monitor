@@ -1,0 +1,320 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Patient Monitoring System</title>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f3f6fb;
+            color: #172b4d;
+        }
+
+        .layout { display: flex; min-height: 100vh; }
+
+        .sidebar {
+            width: 245px;
+            flex-shrink: 0;
+            background: #102344;
+            color: white;
+            padding: 30px 20px;
+        }
+
+        .logo {
+            font-size: 21px;
+            font-weight: bold;
+            line-height: 1.5;
+            margin-bottom: 45px;
+        }
+
+        .logo span { color: #59d6c3; }
+
+        .menu-title {
+            color: #9eb0ca;
+            font-size: 12px;
+            margin: 20px 10px;
+            text-transform: uppercase;
+        }
+
+        .menu-item {
+            display: block;
+            padding: 14px 12px;
+            margin-bottom: 8px;
+            border-radius: 10px;
+            color: #dce7f8;
+            text-decoration: none;
+        }
+
+        .menu-item.active, .menu-item:hover {
+            background: #24436f;
+            color: white;
+        }
+
+        .main { flex: 1; min-width: 0; padding: 30px; }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 32px;
+        }
+
+        .topbar h1 { font-size: 27px; margin-bottom: 8px; }
+
+        .muted { color: #7c8ba5; font-size: 14px; }
+
+        .profile {
+            background: white;
+            padding: 12px 16px;
+            border-radius: 12px;
+            box-shadow: 0 4px 18px #1023440b;
+        }
+
+        .welcome {
+            background: linear-gradient(120deg, #1768d5, #31b9b2);
+            color: white;
+            border-radius: 18px;
+            padding: 28px;
+            margin-bottom: 28px;
+        }
+
+        .welcome h2 { font-size: 23px; margin-bottom: 10px; }
+        .welcome p { line-height: 1.6; color: #e9ffff; }
+        .section-heading { font-size: 19px; margin-bottom: 18px; }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 23px;
+            box-shadow: 0 5px 20px #1023440a;
+            border: 1px solid #e9eef6;
+        }
+
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 22px;
+        }
+
+        .icon {
+            width: 45px;
+            height: 45px;
+            display: grid;
+            place-items: center;
+            border-radius: 13px;
+            font-size: 23px;
+        }
+
+        .pink { background: #fff0f3; }
+        .orange { background: #fff3e5; }
+        .blue { background: #eaf2ff; }
+
+        .card h3 { color: #70809b; font-size: 14px; font-weight: 500; }
+
+        .value {
+            font-size: 30px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            color: #172b4d;
+        }
+
+        .unit {
+            font-size: 14px;
+            color: #7c8ba5;
+            font-weight: normal;
+        }
+
+        .status-card {
+            background: white;
+            padding: 24px;
+            border-radius: 16px;
+            border: 1px solid #e9eef6;
+            margin-bottom: 25px;
+        }
+
+        .status-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .status-pill {
+            display: inline-block;
+            background: #fff3d8;
+            color: #946200;
+            padding: 8px 13px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .info {
+            color: #71809a;
+            font-size: 14px;
+            line-height: 1.7;
+            margin-top: 16px;
+        }
+
+        footer {
+            text-align: center;
+            color: #8290a6;
+            font-size: 13px;
+            padding: 18px 0;
+        }
+
+        @media (max-width: 1000px) {
+            .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+
+        @media (max-width: 700px) {
+            .layout { display: block; }
+            .sidebar { width: 100%; padding: 18px; }
+            .logo { margin-bottom: 15px; }
+            .menu-title { display: none; }
+
+            .menu-item {
+                display: inline-block;
+                padding: 10px;
+                margin: 3px;
+            }
+
+            .main { padding: 18px; }
+            .topbar h1 { font-size: 22px; }
+            .cards { grid-template-columns: 1fr; }
+            .welcome { padding: 22px; }
+        }
+    </style>
+</head>
+
+<body>
+<div class="layout">
+
+    <aside class="sidebar">
+        <div class="logo">
+            ✚ Smart<span>Care</span><br>
+            <small style="font-size:12px;font-weight:normal;color:#bdcbe0">
+                Patient Monitoring
+            </small>
+        </div>
+
+        <div class="menu-title">Main Menu</div>
+        <a class="menu-item active" href="/">▦ &nbsp; Dashboard</a>
+        <a class="menu-item" href="#vitals">♡ &nbsp; Vital Signs</a>
+        <a class="menu-item" href="#status">◷ &nbsp; Patient Status</a>
+    </aside>
+
+    <main class="main">
+
+        <header class="topbar">
+            <div>
+                <h1>Patient Dashboard</h1>
+                <p class="muted">Smart healthcare monitoring overview</p>
+            </div>
+
+            <div class="profile">
+                👤 &nbsp;
+                <span th:text="${patientName}">Naveen</span>
+            </div>
+        </header>
+
+        <section class="welcome">
+            <h2>Welcome to SmartCare 👋</h2>
+            <p>Monitor patient vital signs from one simple dashboard.</p>
+        </section>
+
+        <h2 class="section-heading" id="vitals">Patient Vital Signs</h2>
+
+        <section class="cards">
+
+            <article class="card">
+                <div class="card-top">
+                    <h3>Heart Rate</h3>
+                    <div class="icon pink">♡</div>
+                </div>
+
+                <div class="value">
+                    <span th:text="${heartRate}">--</span>
+                    <span class="unit">BPM</span>
+                </div>
+
+                <p class="muted">Sample measurement</p>
+            </article>
+
+            <article class="card">
+                <div class="card-top">
+                    <h3>Body Temperature</h3>
+                    <div class="icon orange">🌡</div>
+                </div>
+
+                <div class="value">
+                    <span th:text="${temperature}">--</span>
+                    <span class="unit">°C</span>
+                </div>
+
+                <p class="muted">Sample measurement</p>
+            </article>
+
+            <article class="card">
+                <div class="card-top">
+                    <h3>Oxygen Saturation</h3>
+                    <div class="icon blue">♧</div>
+                </div>
+
+                <div class="value">
+                    <span th:text="${spo2}">--</span>
+                    <span class="unit">SpO₂ %</span>
+                </div>
+
+                <p class="muted">Sample measurement</p>
+            </article>
+
+        </section>
+
+        <section class="status-card" id="status">
+            <div class="status-row">
+                <div>
+                    <h2 style="font-size:19px;margin-bottom:8px">
+                        Patient Monitoring Status
+                    </h2>
+                    <p class="muted">
+                        Patient:
+                        <span th:text="${patientName}">Naveen</span>
+                    </p>
+                </div>
+
+                <span class="status-pill">
+                    ● <span th:text="${status}">Waiting for data</span>
+                </span>
+            </div>
+
+            <p class="info">
+                This dashboard currently displays sample values for project testing.
+                Connect a sensor or real data source to receive actual measurements.
+            </p>
+        </section>
+
+        <footer>
+            Smart Patient Monitoring System · Academic Mini Project
+        </footer>
+
+    </main>
+</div>
+</body>
+</html>
