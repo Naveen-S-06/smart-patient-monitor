@@ -1,320 +1,958 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Patient Monitoring System</title>
+
+    <title>PulseCare | Patient Monitoring</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
 
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #2563eb;
+            --primary-light: #eff6ff;
+            --background: #f5f7fb;
+            --surface: #ffffff;
+            --text: #172033;
+            --muted: #8490a5;
+            --border: #e8edf4;
+            --green: #16a36a;
+            --red: #e5484d;
+            --orange: #e99a22;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
         body {
-            font-family: Arial, sans-serif;
-            background: #f3f6fb;
-            color: #172b4d;
+            font-family: 'Inter', sans-serif;
+            background: var(--background);
+            color: var(--text);
+            min-height: 100vh;
         }
 
-        .layout { display: flex; min-height: 100vh; }
+        button, input {
+            font: inherit;
+        }
+
+        .app {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
 
         .sidebar {
-            width: 245px;
+            width: 250px;
+            background: #fff;
+            border-right: 1px solid var(--border);
+            padding: 28px 18px;
+            display: flex;
+            flex-direction: column;
             flex-shrink: 0;
-            background: #102344;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 10px;
+            margin-bottom: 42px;
+        }
+
+        .brand-icon {
+            height: 43px;
+            width: 43px;
+            border-radius: 14px;
+            background: var(--primary);
             color: white;
-            padding: 30px 20px;
+            display: grid;
+            place-items: center;
+            font-size: 25px;
+            font-weight: 800;
         }
 
-        .logo {
-            font-size: 21px;
-            font-weight: bold;
-            line-height: 1.5;
-            margin-bottom: 45px;
+        .brand h2 {
+            font-size: 19px;
+            letter-spacing: -0.8px;
         }
 
-        .logo span { color: #59d6c3; }
+        .brand p {
+            font-size: 11px;
+            color: var(--muted);
+            margin-top: 4px;
+        }
 
-        .menu-title {
-            color: #9eb0ca;
+        .nav-label {
+            color: #9aa4b5;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1.6px;
+            padding: 0 13px;
+            margin-bottom: 14px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 13px 14px;
+            border-radius: 11px;
+            margin-bottom: 7px;
+            font-size: 13px;
+            color: #667187;
+            font-weight: 500;
+        }
+
+        .nav-item.active {
+            background: var(--primary-light);
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .nav-icon {
+            font-size: 19px;
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            padding: 18px 12px 0;
+        }
+
+        .sidebar-note {
+            padding: 17px;
+            border-radius: 15px;
+            background: #f5f8ff;
+            border: 1px solid #e7edff;
+        }
+
+        .sidebar-note strong {
             font-size: 12px;
-            margin: 20px 10px;
-            text-transform: uppercase;
         }
 
-        .menu-item {
-            display: block;
-            padding: 14px 12px;
-            margin-bottom: 8px;
-            border-radius: 10px;
-            color: #dce7f8;
-            text-decoration: none;
+        .sidebar-note p {
+            font-size: 11px;
+            line-height: 1.7;
+            color: var(--muted);
+            margin-top: 8px;
         }
 
-        .menu-item.active, .menu-item:hover {
-            background: #24436f;
-            color: white;
-        }
+        /* Main layout */
 
-        .main { flex: 1; min-width: 0; padding: 30px; }
+        .main {
+            flex: 1;
+            min-width: 0;
+            padding: 30px 36px;
+        }
 
         .topbar {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            gap: 15px;
+            justify-content: space-between;
+            gap: 20px;
             margin-bottom: 32px;
         }
 
-        .topbar h1 { font-size: 27px; margin-bottom: 8px; }
+        .breadcrumb {
+            font-size: 12px;
+            color: var(--muted);
+            margin-bottom: 9px;
+        }
 
-        .muted { color: #7c8ba5; font-size: 14px; }
+        .page-title {
+            font-size: clamp(23px, 3vw, 30px);
+            font-weight: 800;
+            letter-spacing: -1.2px;
+        }
 
-        .profile {
+        .page-subtitle {
+            font-size: 13px;
+            color: var(--muted);
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+
+        .top-right {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .system-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
             background: white;
-            padding: 12px 16px;
-            border-radius: 12px;
-            box-shadow: 0 4px 18px #1023440b;
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            padding: 11px 14px;
+            font-size: 11px;
+            font-weight: 600;
+            white-space: nowrap;
         }
 
-        .welcome {
-            background: linear-gradient(120deg, #1768d5, #31b9b2);
-            color: white;
-            border-radius: 18px;
-            padding: 28px;
-            margin-bottom: 28px;
+        .dot {
+            width: 8px;
+            height: 8px;
+            background: var(--green);
+            border-radius: 50%;
         }
 
-        .welcome h2 { font-size: 23px; margin-bottom: 10px; }
-        .welcome p { line-height: 1.6; color: #e9ffff; }
-        .section-heading { font-size: 19px; margin-bottom: 18px; }
+        .avatar {
+            width: 43px;
+            height: 43px;
+            border-radius: 14px;
+            background: #dbeafe;
+            color: #1d4ed8;
+            display: grid;
+            place-items: center;
+            font-weight: 800;
+        }
 
-        .cards {
+        /* Cards */
+
+        .stats-grid {
             display: grid;
             grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 18px;
-            margin-bottom: 28px;
+            gap: 19px;
+            margin-bottom: 26px;
         }
 
-        .card {
-            background: white;
-            border-radius: 16px;
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 18px;
             padding: 23px;
-            box-shadow: 0 5px 20px #1023440a;
-            border: 1px solid #e9eef6;
+            min-width: 0;
+            box-shadow: 0 3px 15px rgba(23, 32, 51, 0.02);
         }
 
-        .card-top {
+        .stat-head {
             display: flex;
             justify-content: space-between;
             align-items: center;
             gap: 8px;
-            margin-bottom: 22px;
+            margin-bottom: 23px;
         }
 
-        .icon {
-            width: 45px;
-            height: 45px;
+        .stat-label {
+            color: #69768c;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
             display: grid;
             place-items: center;
-            border-radius: 13px;
-            font-size: 23px;
+            font-size: 20px;
         }
 
-        .pink { background: #fff0f3; }
-        .orange { background: #fff3e5; }
-        .blue { background: #eaf2ff; }
+        .heart-icon { background: #fff0f0; }
+        .temp-icon { background: #fff5e8; }
+        .spo2-icon { background: #eaf2ff; }
 
-        .card h3 { color: #70809b; font-size: 14px; font-weight: 500; }
+        .stat-value {
+            font-size: clamp(25px, 3vw, 34px);
+            font-weight: 800;
+            letter-spacing: -1.4px;
+            overflow-wrap: anywhere;
+        }
 
-        .value {
-            font-size: 30px;
-            font-weight: bold;
+        .stat-value small {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--muted);
+            letter-spacing: 0;
+        }
+
+        .stat-foot {
+            margin-top: 12px;
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        /* Content columns */
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.85fr);
+            gap: 22px;
+            align-items: start;
+        }
+
+        .panel {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 25px;
+            min-width: 0;
+            box-shadow: 0 3px 15px rgba(23, 32, 51, 0.02);
+        }
+
+        .panel-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .panel-heading h2 {
+            font-size: 16px;
+            font-weight: 800;
+        }
+
+        .panel-heading p {
+            font-size: 11px;
+            color: var(--muted);
+            margin-top: 7px;
+            line-height: 1.6;
+        }
+
+        .heading-icon {
+            width: 39px;
+            height: 39px;
+            border-radius: 12px;
+            background: var(--primary-light);
+            color: var(--primary);
+            display: grid;
+            place-items: center;
+            font-size: 19px;
+            flex-shrink: 0;
+        }
+
+        /* Form */
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 20px 16px;
+        }
+
+        .field {
+            min-width: 0;
+        }
+
+        .field.full {
+            grid-column: 1 / -1;
+        }
+
+        .field label {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
             margin-bottom: 9px;
-            color: #172b4d;
+        }
+
+        .input-wrap {
+            position: relative;
+        }
+
+        .field input {
+            width: 100%;
+            height: 47px;
+            padding: 0 13px;
+            background: #fafbfd;
+            border: 1px solid #e1e7f0;
+            border-radius: 10px;
+            outline: none;
+            color: var(--text);
+            font-size: 13px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .field input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            background: white;
+        }
+
+        .field input::placeholder {
+            color: #a4adbd;
         }
 
         .unit {
+            position: absolute;
+            right: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+            font-size: 11px;
+            pointer-events: none;
+        }
+
+        .has-unit input {
+            padding-right: 54px;
+        }
+
+        .help-text {
+            color: var(--muted);
+            font-size: 10px;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+
+        .submit-btn {
+            width: 100%;
+            height: 49px;
+            border: 0;
+            border-radius: 11px;
+            background: var(--primary);
+            color: white;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 25px;
+            box-shadow: 0 5px 13px rgba(37, 99, 235, 0.2);
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .submit-btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+        }
+
+        .privacy-note {
+            text-align: center;
+            margin-top: 14px;
+            color: var(--muted);
+            font-size: 10px;
+            line-height: 1.6;
+        }
+
+        /* Patient summary */
+
+        .patient-banner {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 16px;
+            background: #f7f9fd;
+            border: 1px solid #edf0f6;
+            border-radius: 14px;
+            margin-bottom: 23px;
+        }
+
+        .patient-avatar {
+            height: 51px;
+            width: 51px;
+            flex-shrink: 0;
+            display: grid;
+            place-items: center;
+            border-radius: 15px;
+            background: #dbeafe;
+            color: #2563eb;
+            font-size: 21px;
+        }
+
+        .patient-info {
+            min-width: 0;
+        }
+
+        .patient-info h3 {
             font-size: 14px;
-            color: #7c8ba5;
-            font-weight: normal;
+            overflow-wrap: anywhere;
         }
 
-        .status-card {
-            background: white;
-            padding: 24px;
-            border-radius: 16px;
-            border: 1px solid #e9eef6;
-            margin-bottom: 25px;
+        .patient-info p {
+            font-size: 11px;
+            color: var(--muted);
+            margin-top: 6px;
         }
 
-        .status-row {
+        .detail-list {
+            display: grid;
+            gap: 0;
+        }
+
+        .detail-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 12px;
+            gap: 14px;
+            padding: 15px 0;
+            border-bottom: 1px solid #edf0f5;
         }
 
-        .status-pill {
-            display: inline-block;
-            background: #fff3d8;
-            color: #946200;
-            padding: 8px 13px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: bold;
+        .detail-row:last-child {
+            border-bottom: 0;
         }
 
-        .info {
-            color: #71809a;
-            font-size: 14px;
+        .detail-label {
+            font-size: 12px;
+            color: #69768c;
+        }
+
+        .detail-value {
+            font-size: 12px;
+            font-weight: 700;
+            text-align: right;
+            overflow-wrap: anywhere;
+        }
+
+        .status-box {
+            margin-top: 22px;
+            padding: 16px;
+            border-radius: 12px;
+            background: #f2f5fa;
+            border: 1px solid #e7ebf2;
+        }
+
+        .status-box.normal {
+            background: #ecfdf5;
+            border-color: #c5f0dc;
+        }
+
+        .status-box.warning {
+            background: #fff8e9;
+            border-color: #f6dfaa;
+        }
+
+        .status-box.danger {
+            background: #fff1f1;
+            border-color: #f6cccc;
+        }
+
+        .status-title {
+            font-size: 12px;
+            font-weight: 800;
+            margin-bottom: 7px;
+        }
+
+        .status-message {
+            font-size: 11px;
+            color: #647086;
             line-height: 1.7;
-            margin-top: 16px;
+            overflow-wrap: anywhere;
         }
 
-        footer {
+        .disclaimer {
+            font-size: 10px;
+            color: var(--muted);
+            line-height: 1.7;
+            margin-top: 17px;
+        }
+
+        .footer {
             text-align: center;
-            color: #8290a6;
-            font-size: 13px;
-            padding: 18px 0;
+            padding: 27px 0 5px;
+            font-size: 10px;
+            color: #929caf;
+            line-height: 1.8;
         }
 
-        @media (max-width: 1000px) {
-            .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        /* Responsive */
+
+        @media (max-width: 1100px) {
+            .sidebar {
+                width: 205px;
+            }
+
+            .main {
+                padding: 25px 22px;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         @media (max-width: 700px) {
-            .layout { display: block; }
-            .sidebar { width: 100%; padding: 18px; }
-            .logo { margin-bottom: 15px; }
-            .menu-title { display: none; }
-
-            .menu-item {
-                display: inline-block;
-                padding: 10px;
-                margin: 3px;
+            .sidebar {
+                display: none;
             }
 
-            .main { padding: 18px; }
-            .topbar h1 { font-size: 22px; }
-            .cards { grid-template-columns: 1fr; }
-            .welcome { padding: 22px; }
+            .main {
+                padding: 20px 15px;
+            }
+
+            .topbar {
+                align-items: flex-start;
+                margin-bottom: 23px;
+            }
+
+            .top-right {
+                gap: 8px;
+            }
+
+            .system-pill {
+                padding: 9px;
+                font-size: 0;
+            }
+
+            .system-pill .dot {
+                flex-shrink: 0;
+            }
+
+            .avatar {
+                width: 38px;
+                height: 38px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 13px;
+            }
+
+            .stat-card {
+                padding: 18px;
+            }
+
+            .stat-head {
+                margin-bottom: 14px;
+            }
+
+            .stat-value {
+                font-size: 29px;
+            }
+
+            .content-grid {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            .panel {
+                padding: 19px;
+            }
+        }
+
+        @media (max-width: 390px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .field.full {
+                grid-column: auto;
+            }
+
+            .page-title {
+                font-size: 22px;
+            }
         }
     </style>
 </head>
 
 <body>
-<div class="layout">
 
+<div class="app">
+
+    <!-- Sidebar -->
     <aside class="sidebar">
-        <div class="logo">
-            ✚ Smart<span>Care</span><br>
-            <small style="font-size:12px;font-weight:normal;color:#bdcbe0">
-                Patient Monitoring
-            </small>
+
+        <div class="brand">
+            <div class="brand-icon">+</div>
+            <div>
+                <h2>PulseCare</h2>
+                <p>Patient Intelligence</p>
+            </div>
         </div>
 
-        <div class="menu-title">Main Menu</div>
-        <a class="menu-item active" href="/">▦ &nbsp; Dashboard</a>
-        <a class="menu-item" href="#vitals">♡ &nbsp; Vital Signs</a>
-        <a class="menu-item" href="#status">◷ &nbsp; Patient Status</a>
+        <p class="nav-label">WORKSPACE</p>
+
+        <div class="nav-item active">
+            <span class="nav-icon">▦</span>
+            <span>Overview</span>
+        </div>
+
+        <div class="nav-item">
+            <span class="nav-icon">♙</span>
+            <span>Patient Records</span>
+        </div>
+
+        <div class="nav-item">
+            <span class="nav-icon">♡</span>
+            <span>Vital Signs</span>
+        </div>
+
+        <div class="nav-item">
+            <span class="nav-icon">⚙</span>
+            <span>Settings</span>
+        </div>
+
+        <div class="sidebar-bottom">
+            <div class="sidebar-note">
+                <strong>Patient Care System</strong>
+                <p>Record vital signs and review the submitted patient measurements.</p>
+            </div>
+        </div>
+
     </aside>
 
+    <!-- Main content -->
     <main class="main">
 
         <header class="topbar">
+
             <div>
-                <h1>Patient Dashboard</h1>
-                <p class="muted">Smart healthcare monitoring overview</p>
+                <p class="breadcrumb">Workspace / Patient Monitoring</p>
+                <h1 class="page-title">Patient Monitoring</h1>
+                <p class="page-subtitle">
+                    Monitor vital signs and review patient health measurements.
+                </p>
             </div>
 
-            <div class="profile">
-                👤 &nbsp;
-                <span th:text="${patientName}">Naveen</span>
+            <div class="top-right">
+                <div class="system-pill">
+                    <span class="dot"></span>
+                    System Ready
+                </div>
+                <div class="avatar">PC</div>
             </div>
+
         </header>
 
-        <section class="welcome">
-            <h2>Welcome to SmartCare 👋</h2>
-            <p>Monitor patient vital signs from one simple dashboard.</p>
-        </section>
+        <!-- Vital sign cards -->
+        <section class="stats-grid">
 
-        <h2 class="section-heading" id="vitals">Patient Vital Signs</h2>
-
-        <section class="cards">
-
-            <article class="card">
-                <div class="card-top">
-                    <h3>Heart Rate</h3>
-                    <div class="icon pink">♡</div>
+            <article class="stat-card">
+                <div class="stat-head">
+                    <span class="stat-label">Heart Rate</span>
+                    <div class="stat-icon heart-icon">♥</div>
                 </div>
 
-                <div class="value">
-                    <span th:text="${heartRate}">--</span>
-                    <span class="unit">BPM</span>
+                <div class="stat-value">
+                    <span th:text="${heartRate != null ? heartRate : '--'}">--</span>
+                    <small>bpm</small>
                 </div>
 
-                <p class="muted">Sample measurement</p>
+                <p class="stat-foot">Heart beats per minute</p>
             </article>
 
-            <article class="card">
-                <div class="card-top">
-                    <h3>Body Temperature</h3>
-                    <div class="icon orange">🌡</div>
+            <article class="stat-card">
+                <div class="stat-head">
+                    <span class="stat-label">Body Temperature</span>
+                    <div class="stat-icon temp-icon">♨</div>
                 </div>
 
-                <div class="value">
-                    <span th:text="${temperature}">--</span>
-                    <span class="unit">°C</span>
+                <div class="stat-value">
+                    <span th:text="${temperature != null ? temperature : '--'}">--</span>
+                    <small>°C</small>
                 </div>
 
-                <p class="muted">Sample measurement</p>
+                <p class="stat-foot">Body temperature measurement</p>
             </article>
 
-            <article class="card">
-                <div class="card-top">
-                    <h3>Oxygen Saturation</h3>
-                    <div class="icon blue">♧</div>
+            <article class="stat-card">
+                <div class="stat-head">
+                    <span class="stat-label">Blood Oxygen</span>
+                    <div class="stat-icon spo2-icon">◉</div>
                 </div>
 
-                <div class="value">
-                    <span th:text="${spo2}">--</span>
-                    <span class="unit">SpO₂ %</span>
+                <div class="stat-value">
+                    <span th:text="${spo2 != null ? spo2 : '--'}">--</span>
+                    <small>% SpO₂</small>
                 </div>
 
-                <p class="muted">Sample measurement</p>
+                <p class="stat-foot">Peripheral oxygen saturation</p>
             </article>
 
         </section>
 
-        <section class="status-card" id="status">
-            <div class="status-row">
-                <div>
-                    <h2 style="font-size:19px;margin-bottom:8px">
-                        Patient Monitoring Status
-                    </h2>
-                    <p class="muted">
-                        Patient:
-                        <span th:text="${patientName}">Naveen</span>
+        <!-- Form and patient details -->
+        <section class="content-grid">
+
+            <!-- Input form -->
+            <article class="panel">
+
+                <div class="panel-heading">
+                    <div>
+                        <h2>Enter Patient Data</h2>
+                        <p>Fill in the patient details and measured vital signs.</p>
+                    </div>
+
+                    <div class="heading-icon">✚</div>
+                </div>
+
+                <form th:action="@{/monitor}" action="/monitor" method="post">
+
+                    <div class="form-grid">
+
+                        <div class="field full">
+                            <label for="patientName">Patient Name</label>
+                            <input
+                                id="patientName"
+                                type="text"
+                                name="patientName"
+                                placeholder="Enter patient's full name"
+                                maxlength="100"
+                                required>
+                        </div>
+
+                        <div class="field">
+                            <label for="heartRate">Heart Rate</label>
+
+                            <div class="input-wrap has-unit">
+                                <input
+                                    id="heartRate"
+                                    type="number"
+                                    name="heartRate"
+                                    min="1"
+                                    max="250"
+                                    step="1"
+                                    placeholder="72"
+                                    required>
+                                <span class="unit">bpm</span>
+                            </div>
+
+                            <p class="help-text">Beats per minute</p>
+                        </div>
+
+                        <div class="field">
+                            <label for="temperature">Temperature</label>
+
+                            <div class="input-wrap has-unit">
+                                <input
+                                    id="temperature"
+                                    type="number"
+                                    name="temperature"
+                                    min="25"
+                                    max="45"
+                                    step="0.1"
+                                    placeholder="36.8"
+                                    required>
+                                <span class="unit">°C</span>
+                            </div>
+
+                            <p class="help-text">Body temperature in Celsius</p>
+                        </div>
+
+                        <div class="field full">
+                            <label for="spo2">Blood Oxygen (SpO₂)</label>
+
+                            <div class="input-wrap has-unit">
+                                <input
+                                    id="spo2"
+                                    type="number"
+                                    name="spo2"
+                                    min="0"
+                                    max="100"
+                                    step="1"
+                                    placeholder="98"
+                                    required>
+                                <span class="unit">%</span>
+                            </div>
+
+                            <p class="help-text">
+                                Enter the measured oxygen saturation percentage.
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <button class="submit-btn" type="submit">
+                        Submit Patient Data &nbsp; →
+                    </button>
+
+                    <p class="privacy-note">
+                        Verify all measurements before submitting.
                     </p>
+
+                </form>
+
+            </article>
+
+            <!-- Patient summary -->
+            <article class="panel">
+
+                <div class="panel-heading">
+                    <div>
+                        <h2>Patient Summary</h2>
+                        <p>Latest patient information received by the application.</p>
+                    </div>
+
+                    <div class="heading-icon">♙</div>
                 </div>
 
-                <span class="status-pill">
-                    ● <span th:text="${status}">Waiting for data</span>
-                </span>
-            </div>
+                <div class="patient-banner">
+                    <div class="patient-avatar">♙</div>
 
-            <p class="info">
-                This dashboard currently displays sample values for project testing.
-                Connect a sensor or real data source to receive actual measurements.
-            </p>
+                    <div class="patient-info">
+                        <h3 th:text="${patientName != null ? patientName : 'No patient submitted'}">
+                            No patient submitted
+                        </h3>
+
+                        <p>Patient monitoring record</p>
+                    </div>
+                </div>
+
+                <div class="detail-list">
+
+                    <div class="detail-row">
+                        <span class="detail-label">Patient Name</span>
+                        <span class="detail-value"
+                              th:text="${patientName != null ? patientName : '—'}">—</span>
+                    </div>
+
+                    <div class="detail-row">
+                        <span class="detail-label">Heart Rate</span>
+                        <span class="detail-value">
+                            <span th:text="${heartRate != null ? heartRate : '—'}">—</span>
+                            <span th:if="${heartRate != null}"> bpm</span>
+                        </span>
+                    </div>
+
+                    <div class="detail-row">
+                        <span class="detail-label">Temperature</span>
+                        <span class="detail-value">
+                            <span th:text="${temperature != null ? temperature : '—'}">—</span>
+                            <span th:if="${temperature != null}"> °C</span>
+                        </span>
+                    </div>
+
+                    <div class="detail-row">
+                        <span class="detail-label">SpO₂ Level</span>
+                        <span class="detail-value">
+                            <span th:text="${spo2 != null ? spo2 : '—'}">—</span>
+                            <span th:if="${spo2 != null}"> %</span>
+                        </span>
+                    </div>
+
+                </div>
+
+                <div class="status-box"
+                     th:classappend="${status != null and #strings.containsIgnoreCase(status, 'critical')} ? ' danger' :
+                                     (${status != null and (#strings.containsIgnoreCase(status, 'warning') or #strings.containsIgnoreCase(status, 'abnormal'))} ? ' warning' :
+                                     (${status != null and #strings.containsIgnoreCase(status, 'normal')} ? ' normal' : ''))">
+
+                    <p class="status-title">Health Assessment</p>
+
+                    <p class="status-message"
+                       th:text="${status != null ? status : 'Submit patient measurements to view the backend assessment.'}">
+                        Submit patient measurements to view the backend assessment.
+                    </p>
+
+                </div>
+
+                <p class="disclaimer">
+                    This dashboard is a monitoring interface, not a diagnostic
+                    device. Its status depends on the backend assessment logic
+                    and the accuracy of the submitted measurements.
+                </p>
+
+            </article>
+
         </section>
 
-        <footer>
-            Smart Patient Monitoring System · Academic Mini Project
+        <footer class="footer">
+            PulseCare Patient Monitoring System<br>
+            For educational and demonstration purposes.
         </footer>
 
     </main>
+
 </div>
+
 </body>
 </html>

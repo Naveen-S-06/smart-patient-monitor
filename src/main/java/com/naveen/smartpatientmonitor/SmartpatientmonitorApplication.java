@@ -1,4 +1,3 @@
-
 package com.naveen.smartpatientmonitor;
 
 import org.springframework.boot.SpringApplication;
@@ -10,5 +9,4 @@ public class SmartpatientmonitorApplication {
     public static void main(String[] args) {
         SpringApplication.run(SmartpatientmonitorApplication.class, args);
     }
-
 }
