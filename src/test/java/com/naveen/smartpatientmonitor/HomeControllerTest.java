@@ -2,6 +2,9 @@
 package com.naveen.smartpatientmonitor;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.never;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,46 +14,43 @@ import org.springframework.ui.Model;
 public class HomeControllerTest {
 
     private HomeController controller;
+    private PatientRepository patientRepository;
     private Model model;
 
     @BeforeEach
     void setUp() {
-        controller = new HomeController();
+        patientRepository = mock(PatientRepository.class);
+        controller = new HomeController(patientRepository);
         model = new ExtendedModelMap();
     }
 
     @Test
     void homePageShouldDisplayPatientData() {
-
         String page = controller.home(model);
 
         assertEquals("index", page);
-        assertEquals("Naveen",
-                model.getAttribute("patientName"));
-        assertEquals(76,
-                model.getAttribute("heartRate"));
-        assertEquals(36.8,
-                model.getAttribute("temperature"));
-        assertEquals(98,
-                model.getAttribute("spo2"));
-
+        assertEquals("Naveen", model.getAttribute("patientName"));
+        assertEquals(76, model.getAttribute("heartRate"));
+        assertEquals(36.8, model.getAttribute("temperature"));
+        assertEquals(98, model.getAttribute("spo2"));
         assertEquals("Sample data - not analyzed",
                 model.getAttribute("status"));
     }
 
     @Test
     void normalPatientTest() {
-
         controller.monitor("Naveen", 76, 36.8, 98, model);
 
         assertEquals(
                 "NO DEMO ALERT: This does not confirm the patient is safe",
                 model.getAttribute("status"));
+
+        verify(patientRepository).save(
+                org.mockito.ArgumentMatchers.any(Patient.class));
     }
 
     @Test
     void warningPatientTest() {
-
         controller.monitor("Arun", 105, 38.0, 94, model);
 
         assertEquals(
@@ -60,7 +60,6 @@ public class HomeControllerTest {
 
     @Test
     void emergencyPatientTest() {
-
         controller.monitor("Priya", 135, 40.0, 88, model);
 
         assertEquals(
@@ -70,11 +69,13 @@ public class HomeControllerTest {
 
     @Test
     void invalidPatientTest() {
-
         controller.monitor("", 76, 36.8, 98, model);
 
         assertEquals(
                 "INPUT ERROR: Patient name is required",
                 model.getAttribute("status"));
+
+        verify(patientRepository, never()).save(
+                org.mockito.ArgumentMatchers.any(Patient.class));
     }
 }
