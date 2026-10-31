@@ -12,6 +12,7 @@ import java.util.Collections;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
@@ -35,7 +36,6 @@ public class HomeControllerTest {
         controller = new HomeController(patientRepository);
 
         model = new ExtendedModelMap();
-
         redirectAttributes = new RedirectAttributesModelMap();
     }
 
@@ -57,6 +57,7 @@ public class HomeControllerTest {
     }
 
     @Test
+    @EnabledIfSystemProperty(named = "test.mode", matches = "NORMAL")
     void normalPatientTest() {
 
         String page = controller.monitor(
@@ -74,6 +75,7 @@ public class HomeControllerTest {
     }
 
     @Test
+    @EnabledIfSystemProperty(named = "test.mode", matches = "WARNING")
     void warningPatientTest() {
 
         String page = controller.monitor(
@@ -91,6 +93,7 @@ public class HomeControllerTest {
     }
 
     @Test
+    @EnabledIfSystemProperty(named = "test.mode", matches = "EMERGENCY")
     void emergencyPatientTest() {
 
         String page = controller.monitor(
